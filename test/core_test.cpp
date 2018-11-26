@@ -7,7 +7,7 @@ int main () {
     
     Point* grid = prob.get_grid();
 
-    prob.delete_point(2,2);
+    prob.delete_point(grid+IDX2(2,2,n));
 
     prob.print_grid();
     prob.print_available();
@@ -25,4 +25,11 @@ int main () {
     std::cout << "\nSIZE OF Point: " << sizeof(Point) << std::endl;
 
     prob.solve();
+    
+    std::cout << "\nSOLUTION\n" << std::endl;
+    prob.print_grid();
+    std::cout << "\nAVAILABLE:" << std::endl;
+    prob.print_available();
+    std::cout << "\nCHOSEN:" << std::endl;
+    prob.print_chosen();
 }

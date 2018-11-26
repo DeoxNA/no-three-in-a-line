@@ -94,19 +94,30 @@ void NTIAL::print_grid() {
 }
 
 /**
- * Sorts the list of available points.
- */
-void NTIAL::sort_available() {
-  std::sort(available.begin(), available.end(), Point::PointCompare);
-}
-
-/**
  * Prints current list of available points.
  */
 void NTIAL::print_available() {
   for (auto p : available) {
+    if (p->delete_rank < INT_MAX) {
+      std::cout << *p << std::endl;
+    }
+  }
+}
+
+/**
+ * Prints current list of chosen points.
+ */
+void NTIAL::print_chosen() {
+  for (auto p : chosen) {
     std::cout << *p << std::endl;
   }
+}
+
+/**
+ * Sorts the list of available points.
+ */
+void NTIAL::sort_available() {
+  std::sort(available.begin(), available.end(), Point::PointCompare);
 }
 
 /**
@@ -117,24 +128,54 @@ Point* NTIAL::get_grid() {
 }
 
 /**
- * Deletes the point at (i,j)
+ * Deletes the point p
  */
-void NTIAL::delete_point(const int i, const int j) {
-  grid[IDX2(i,j,n)].delete_rank = INT_MAX;
-  grid[IDX2(i,j,n)].deleted     = true;
+void NTIAL::delete_point(Point * p) {
+  p->delete_rank = INT_MAX;
+  p->deleted     = true;
+}
+
+/**
+ * Deletes points that became invalid after adding point p
+ */
+void NTIAL::delete_invalid_points(Point * p) {
+  // TODO Shida do your thing
+}
+
+/**
+ * Updates the delete rank after choosing point p
+ */
+void NTIAL::update_delete_rank(Point * p) {
+  // TODO fill this out
+  // TODO updating delete rank must account for INT_MAX overflow
 }
 
 /**
  * Attempts to find a maximal solution for the n*n No-Three-In-A-Line problem
  */
 void NTIAL::solve() {
-  // Pick a random point
-  std::uniform_int_distribution<int> distribution(0,n-1);
+  // Pick a random point q
+  std::uniform_int_distribution<int> distribution(0, n-1);
   int rand_i = distribution(generator);
   int rand_j = distribution(generator);
-  Point p = grid[IDX2(rand_i,rand_j,n)];
+  Point *q = grid+IDX2(rand_i, rand_j, n);
 
-  std::cout << "Picked initial point\n" << p << std::endl;
+  std::cout << "Picked initial point\n" << *q << std::endl;
 
-  // TODO updating delete rank must account for INT_MAX overflow
+  // Remove q and update state
+  delete_point(q);
+  chosen.push_back(q);
+  update_delete_rank(q);
+  sort_available();
+
+  // Iterate until all points are deleted
+  Point *p;
+  while (available[0]->delete_rank < INT_MAX) {
+    p = available[0];
+    delete_point(p);
+    chosen.push_back(p);
+    delete_invalid_points(p);
+    update_delete_rank(p);
+    sort_available();
+  }
 }

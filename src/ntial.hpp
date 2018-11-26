@@ -54,19 +54,35 @@ class NTIAL {
     void print_available();
 
     /**
-     * Sorts the list of available points.
+     * Prints current list of chosen points.
      */
-    void sort_available();
-
+    void print_chosen();
+    
     /**
      * FOR TESTING: retruns the internal grid
      */
     Point* get_grid();
 
     /**
-     * Deletes the point at (i,j)
+     * Sorts the list of available points.
      */
-    void delete_point(const int i, const int j);
+    void sort_available();
+    
+    /**
+     * Deletes the point p
+     */
+    void delete_point(Point * p);
+    
+    /**
+     * Deletes points that became invalid after adding point p
+     */
+    // TODO Shida do your thing
+    void delete_invalid_points(Point * p);
+
+    /**
+     * Updates the delete rank after choosing point p
+     */
+    void update_delete_rank(Point * p);
     
     /**
      * Attempts to find a maximal solution for the n*n No-Three-In-A-Line problem
