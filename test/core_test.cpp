@@ -1,17 +1,16 @@
 #include <iostream>
-#include "ntial.hpp"
+#include "../src/ntial.hpp"
 
 int main () {
     int n = 4;
-    NTIAL prob (n);
     
-    Point* grid = prob.get_grid();
+    NTIAL prob (n);
 
-    prob.delete_point(grid+IDX2(2,2,n));
+    Point* grid = prob.get_grid();
 
     prob.print_grid();
     prob.print_available();
-    
+
     std::cout << "\nNEW DELETE RANK\n" << std::endl;
 
     grid[IDX2(1,2,n)].delete_rank = 1;
@@ -21,11 +20,11 @@ int main () {
 
     prob.sort_available();
     prob.print_available();
-    
+
     std::cout << "\nSIZE OF Point: " << sizeof(Point) << std::endl;
 
     prob.solve();
-    
+
     std::cout << "\nSOLUTION\n" << std::endl;
     prob.print_grid();
     std::cout << "\nAVAILABLE:" << std::endl;

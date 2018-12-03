@@ -1,11 +1,10 @@
 include ../config.mk
 
-DEP_DIRS   = ../src
+DEP_DIRS  = ../src
 BUILD_DIR = build
 INCLUDE   = ../src
 
 TARGET_SRCS := $(addprefix $(BUILD_DIR)/, $(shell find -name \*.cpp))
-OBJS    := $(TARGET_SRCS:.cpp=.o)
 TARGETS := $(TARGET_SRCS:.cpp=)
 
 DEP_SRCS := $(shell find $(DEP_DIRS) -name \*.cpp)
@@ -16,7 +15,7 @@ all: $(BUILD_DIR) $(TARGETS)
 debug: CXXFLAGS += $(DEBUG_FLAGS)
 debug: all
 
-$(BUILD_DIR)/%: $(OBJS) $(DEPS)
+$(BUILD_DIR)/%: %.o $(DEPS)
 	$(CXX) $(CXXFLAGS) -I$(INCLUDE) $(LDFLAGS) $^ -o $@
 
 $(BUILD_DIR)/%.o: %.cpp
