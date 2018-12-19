@@ -6,7 +6,7 @@
 #include <random>
 #include <chrono>
 #include <limits.h>
-#include "ntial.hpp"
+#include "ntial_dr.hpp"
 
 using std::vector;
 using std::string;
@@ -17,7 +17,7 @@ using std::string;
 /**
  * Prints a point to the output stream
  */
-std::ostream& operator<<(std::ostream &output, const Point &p) {
+std::ostream& operator<<(std::ostream &output, const NTIAL_DR::Point &p) {
   output << "( x: " << p.x << ", y: " << p.y << ", dr: " << p.delete_rank << ", c?: " << p.chosen << " )";
   return output;
 }
@@ -25,18 +25,18 @@ std::ostream& operator<<(std::ostream &output, const Point &p) {
 /**
  * Compares references to Points by comparing the delete_rank of the objects they point to.
  */
-bool Point::PointCompare(Point* a, Point* b) {
+bool NTIAL_DR::Point::PointCompare(Point* a, Point* b) {
   return a->delete_rank < b->delete_rank;
 }
 
 
 /***************************
- * NTIAL member definitions *
+ * NTIAL_DR member definitions *
  ****************************/
 /**
  * Constructs an instance of the No-Three-In-A-Line problem
  */
-NTIAL::NTIAL(unsigned int N) {
+NTIAL_DR::NTIAL_DR(int N) {
   n = N;
 
   // Allocate memory
@@ -58,14 +58,14 @@ NTIAL::NTIAL(unsigned int N) {
 /**
  * Destroys an instance of the No-Three-In-A-Line problem
  */
-NTIAL::~NTIAL() {
+NTIAL_DR::~NTIAL_DR() {
   free(grid);
 }
 
 /**
  * Initializes data structures. Assumes chosen is empty.
  */
-void NTIAL::init_data() {
+void NTIAL_DR::init_data() {
   // Fill data structures with points
   size_t offset;
   for (int i = 0; i < n; i++) {
@@ -80,9 +80,9 @@ void NTIAL::init_data() {
 }
 
 /**
- * Resets an instantiated NTIAL problem.
+ * Resets an instantiated NTIAL_DR problem.
  */
-void NTIAL::reset() {
+void NTIAL_DR::reset() {
   // Empty chosen vector
   chosen.clear();
 
@@ -91,9 +91,9 @@ void NTIAL::reset() {
 }
 
 /**
- * Prints current state of the grid to stdout. 'x' indicates chosen points.
+ * Prints current state of the grid to stdout. '*' indicates chosen points.
  */
-void NTIAL::print_grid() {
+void NTIAL_DR::print_grid() {
   string border (n+2, '-');
 
   // Print top border
@@ -104,7 +104,7 @@ void NTIAL::print_grid() {
     std::cout << '|';           
     for (int j = 0; j < n; j++) {
       if (grid[IDX2(i,j,n)].chosen) {
-        std::cout << 'x';           
+        std::cout << '*';           
       } else {
         std::cout << ' ';
       }
@@ -119,7 +119,7 @@ void NTIAL::print_grid() {
 /**
  * Prints current list of available points.
  */
-void NTIAL::print_available() {
+void NTIAL_DR::print_available() {
   for (auto p : available) {
     if (p->delete_rank < INT_MAX) {
       std::cout << *p << std::endl;
@@ -130,7 +130,7 @@ void NTIAL::print_available() {
 /**
  * Prints current list of chosen points.
  */
-void NTIAL::print_chosen() {
+void NTIAL_DR::print_chosen() {
   for (auto p : chosen) {
     std::cout << *p << std::endl;
   }
@@ -139,14 +139,14 @@ void NTIAL::print_chosen() {
 /**
  * FOR TESTING: returns the internal grid
  */
-Point* NTIAL::get_grid() {
+NTIAL_DR::Point* NTIAL_DR::get_grid() {
   return grid;
 }
 
 /**
  * Sorts the list of available points.
  */
-void NTIAL::sort_available() {
+void NTIAL_DR::sort_available() {
   std::sort(available.begin(), available.end(), Point::PointCompare);
 }
 
@@ -154,21 +154,21 @@ void NTIAL::sort_available() {
 /**
  * Checks whether the point (x, y) is in the grid
  */
-inline bool NTIAL::in_grid(int x, int y) {
+inline bool NTIAL_DR::in_grid(int x, int y) {
   return (0 <= x) && (x < n) && (0 <= y) && (y < n);
 }
 
 /**
  * Deletes the point p
  */
-inline void NTIAL::delete_point(Point * p) {
+inline void NTIAL_DR::delete_point(Point * p) {
   p->delete_rank = INT_MAX;
 }
 
 /**
  * Chooses the point p
  */
-inline void NTIAL::choose_point(Point * p) {
+inline void NTIAL_DR::choose_point(Point * p) {
   chosen.push_back(p);
   p->chosen = true;
 }
@@ -176,7 +176,7 @@ inline void NTIAL::choose_point(Point * p) {
 /**
  * Chooses a random point from those with the least delete rank.
  */
-Point* NTIAL::choose_next() {
+NTIAL_DR::Point* NTIAL_DR::choose_next() {
   int min_dr = available[0]->delete_rank;
   int i = 1;
   while (min_dr == available[i]->delete_rank) {
@@ -190,7 +190,7 @@ Point* NTIAL::choose_next() {
 /**
  * Deletes points that became invalid after adding point p
  */
-void NTIAL::delete_invalid_points(Point * p) {
+void NTIAL_DR::delete_invalid_points(Point * p) {
   // TODO Shida do your thing
   int rise, run, x, y, gcd;
   for (auto q : chosen) {
@@ -220,7 +220,7 @@ void NTIAL::delete_invalid_points(Point * p) {
 /**
  * Updates the delete rank after choosing point p
  */
-void NTIAL::update_delete_rank(Point * p) {
+void NTIAL_DR::update_delete_rank(Point * p) {
   // TODO USE GCD
   // The number of lattice points on a line with end points (a,b) and (b,c)
   //   is gcd(c-a, d-b) + 1
@@ -268,8 +268,9 @@ void NTIAL::update_delete_rank(Point * p) {
 
 /**
  * Attempts to find a maximal solution for the n*n No-Three-In-A-Line problem
+ *   Returns number of points chosen
  */
-bool NTIAL::solve() {
+int NTIAL_DR::solve() {
   // Pick a random point q
   std::uniform_int_distribution<int> distribution(0, n-1);
   int rand_i = distribution(generator);
@@ -296,5 +297,5 @@ bool NTIAL::solve() {
     sort_available();
   }
 
-  return (chosen.size() >= 2*n);
+  return chosen.size();
 }

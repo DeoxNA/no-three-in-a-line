@@ -1,12 +1,12 @@
 #include <iostream>
-#include "../src/ntial.hpp"
+#include "../src/ntial_dr.hpp"
 
 int main () {
     int n = 4;
     
-    NTIAL prob (n);
+    NTIAL_DR prob (n);
 
-    Point* grid = prob.get_grid();
+    NTIAL_DR::Point* grid = prob.get_grid();
 
     prob.print_grid();
     prob.print_available();
@@ -21,7 +21,7 @@ int main () {
     prob.sort_available();
     prob.print_available();
 
-    std::cout << "\nSIZE OF Point: " << sizeof(Point) << std::endl;
+    std::cout << "\nSIZE OF Point: " << sizeof(NTIAL_DR::Point) << std::endl;
 
     prob.solve();
 

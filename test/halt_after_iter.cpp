@@ -1,5 +1,6 @@
 #include <iostream>
-#include "../src/ntial.hpp"
+/* #include "../src/ntial_dr.hpp" */
+#include "../src/ntial_rand.hpp"
 
 int main () {
     int n;
@@ -14,7 +15,8 @@ int main () {
     
     #pragma omp parallel for private(solved)
     for (int i = 0; i < runs; i++) {
-      NTIAL prob (n);
+      // NTIAL_DR prob (n);
+      NTIAL_RAND prob (n);
       solved = prob.solve();
       if (solved) {
         prob.print_grid();
